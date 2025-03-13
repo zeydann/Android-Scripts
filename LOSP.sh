@@ -1,5 +1,5 @@
 #!/bin/bash
-# crave run --no-patch -- "curl https://raw.githubusercontent.com/tillua467/Android-Scripts/refs/heads/main/LOSP.sh | bash"
+# crave run --no-patch -- "curl https://raw.githubusercontent.com/zeydann/Android-Scripts/refs/heads/main/LOSP.sh | bash"
 
 # Remove Unnecessary Files
 echo "===================================="
@@ -32,7 +32,7 @@ echo "===================================="
 echo "=============================================="
 echo "         Cloning Manifest..........."
 echo "=============================================="
-if ! repo init --no-repo-verify --git-lfs -u https://github.com/ProjectInfinity-X/manifest -b 15 -g default,-mips,-darwin,-notdefault; then
+if ! repo init -u https://github.com/Evolution-X/manifest -b vic-qpr1 --git-lfs; then
   echo "Repo initialization failed. Exiting."
   exit 1
 fi
@@ -52,43 +52,38 @@ echo "============="
 echo "=============================================="
 echo "       Cloning Trees..........."
 echo "=============================================="
-git clone https://github.com/tillua467/phoenix-dt -b los-22.1 device/xiaomi/phoenix || { echo "Failed to clone device tree"; exit 1; }
+git clone https://github.com/zeydann/android_device_xiaomi_mojito.git --depth 1 -b 15 device/xiaomi/mojito || { echo "Failed to clone device tree"; exit 1; }
 
-git clone https://github.com/tillua467/sm6150-common -b los-22.1 device/xiaomi/sm6150-common || { echo "Failed to clone common device tree"; exit 1; }
+git clone https://github.com/zeydann/android_device_xiaomi_sm6150-common.git --depth 1 -b 15 device/xiaomi/sm6150-common || { echo "Failed to clone common device tree"; exit 1; }
 
-git clone https://github.com/tillua467/android_kernel_xiaomi_sm6150 kernel/xiaomi/sm6150 || { echo "Failed to clone kernel"; exit 1; }
+git clone https://github.com/zeydann/kernel_xiaomi_mojito.git --depth 1 -b 15 kernel/xiaomi/mojito || { echo "Failed to clone kernel"; exit 1; }
 
-git clone https://github.com/aosp-phoenix/proprietary_vendor_xiaomi_phoenix vendor/xiaomi/phoenix || { echo "Failed to clone vendor phoenix"; exit 1; }
+git clone https://gitlab.com/Sepidermn/android_vendor_xiaomi_mojito.git --depth 1 -b 15 vendor/xiaomi/mojito || { echo "Failed to clone vendor"; exit 1; }
 
-git clone https://github.com/aosp-phoenix/proprietary_vendor_xiaomi_sm6150-common vendor/xiaomi/sm6150-common || { echo "Failed to clone common vendor phoenix"; exit 1; }
+git clone https://gitlab.com/Sepidermn/android_vendor_xiaomi_sm6150-common.git --depth 1 -b 15 vendor/xiaomi/sm6150-common || { echo "Failed to clone common vendor"; exit 1; }
 
-git clone https://github.com/LineageOS/android_hardware_xiaomi hardware/xiaomi || { echo "Failed to clone hardware"; exit 1; }
+git clone https://github.com/zeydann/android_hardware_xiaomi.git --depth 1 -b mojito hardware/xiaomi || { echo "Failed to clone hardware"; exit 1; }
 
-git clone https://gitlab.com/Shripal17/vendor_xiaomi_miuicamera vendor/xiaomi/miuicamera || { echo "Failed to clone MIUI Camera"; exit 1; }
+ # remove frameworks/native
+rm -rf frameworks/native
 
-/opt/crave/resync.sh
-
- # clone
-rm -rf vendor/infinity
-git clone https://github.com/Gtajisan/vendor_infinity -b 15 vendor/infinity
+# add frameworks/native
+git clone https://github.com/ViLelouch/frameworks_native.git -b 15 frameworks/native
 
 # Export Environment Variables
 echo "======= Exporting........ ======"
-export BUILD_USERNAME=tillua467
-export BUILD_HOSTNAME=crave
-export TARGET_DISABLE_EPPE=true
-export TZ=Asia/Dhaka
-export ALLOW_MISSING_DEPENDENCIES=true
+export SELINUX_IGNORE_NEVERALLOWS=true
 echo "======= Export Done ======"
 
 # Set up build environment
 echo "====== Starting Envsetup ======="
-source build/envsetup.sh || { echo "Envsetup failed"; exit 1; }
+. build/envsetup.sh || { echo "Envsetup failed"; exit 1; }
 echo "====== Envsetup Done ======="
 
 
 # Build ROM
 echo "===================================="
-echo "        Build Infinity.."
+echo "        Lunch Target, Start compiling"
 echo "===================================="
-brunch phoenix || { echo "Build failed"; exit 1; }
+lunch lineage_mojito-ap4a-userdebug || { echo "Build failed"; exit 1; }
+m evolution
