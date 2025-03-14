@@ -32,7 +32,7 @@ echo "===================================="
 echo "=============================================="
 echo "         Cloning Manifest..........."
 echo "=============================================="
-if ! repo init -u https://github.com/Evolution-X/manifest -b vic-qpr1 --git-lfs; then
+if ! repo init -u https://github.com/crdroidandroid/android.git -b 15.0 --git-lfs; then
   echo "Repo initialization failed. Exiting."
   exit 1
 fi
@@ -52,7 +52,7 @@ echo "============="
 echo "=============================================="
 echo "       Cloning Trees..........."
 echo "=============================================="
-git clone https://github.com/zeydann/android_device_xiaomi_mojito.git --depth 1 -b 15 device/xiaomi/mojito || { echo "Failed to clone device tree"; exit 1; }
+git clone https://github.com/zeydann/android_device_xiaomi_mojito.git --depth 1 -b cr device/xiaomi/mojito || { echo "Failed to clone device tree"; exit 1; }
 
 git clone https://github.com/zeydann/android_device_xiaomi_sm6150-common.git --depth 1 -b 15 device/xiaomi/sm6150-common || { echo "Failed to clone common device tree"; exit 1; }
 
@@ -68,7 +68,7 @@ git clone https://github.com/zeydann/android_hardware_xiaomi.git --depth 1 -b mo
 rm -rf frameworks/native
 
 # add frameworks/native
-git clone https://github.com/ViLelouch/frameworks_native.git -b 15 frameworks/native
+git clone https://github.com/ViLelouch/frameworks_native.git -b 15.0 frameworks/native
 
 # Export Environment Variables
 echo "======= Exporting........ ======"
@@ -85,5 +85,4 @@ echo "====== Envsetup Done ======="
 echo "===================================="
 echo "        Lunch Target, Start compiling"
 echo "===================================="
-lunch lineage_mojito-ap4a-userdebug || { echo "Build failed"; exit 1; }
-m evolution
+brunch mojito userdebug || { echo "Build failed"; exit 1; }
